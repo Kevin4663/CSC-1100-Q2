@@ -1,0 +1,1 @@
+A text-based interactive game in C++ where players navigate through a labyrinth by interrogating sentinels who either always tell the truth or always lie. Inspired by the famous N vs NP problem made for CSC 1100 
