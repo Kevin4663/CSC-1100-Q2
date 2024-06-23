@@ -1,0 +1,86 @@
+int getRole(){
+    // 0 is a truth teller -- 1 is a lier
+    return rand() % 2;
+}
+
+void populateQuestions(Quests questions[], int numSentinels){
+    ifstream myFile("questions.txt");
+    if (myFile.is_open()){
+        for (int i = 0; i < numSentinels; i++){
+            getline(myFile, questions[i].question);
+            getline(myFile, questions[i].answer);
+            getline(myFile, questions[i].lie);
+            questions[i].role = getRole();
+        }
+    }else{
+        cout << "Error opening file";
+    }
+    myFile.close();
+}
+
+int main(){
+    int numSentinels = 5;
+    int chosenSentinel;
+    int numCorrect = 0;
+    char userAnswer;
+    
+    // creates a array of structs that hold information for each sentinel
+    // then populates their info from a file
+    srand(time(0));
+    Quests questions[numSentinels];
+    populateQuestions(questions, numSentinels);
+    
+
+
+    cout << "Welcome to the Truth or Lie Labyrinth Game!" << "\n";
+    cout << "Find you way by asking the sentinels questions. Some always tell the truth, others always lie." << "\n";
+    cout << "You need to correctly identify truth or lie from all " << numSentinels << " sentinels to win." << "\n";
+    
+    while(numCorrect < numSentinels){
+        cout << "There are paths with sentinels. Choose a sentinel to question (1-" << numSentinels << "): ";
+        cin >> chosenSentinel;
+        // input validation for chosing a sentinel
+        while (chosenSentinel>numSentinels || chosenSentinel<=0){
+            cout << "Invalid Input! Try Again." << "\n";
+            cout << "There are paths with sentinels. Choose a sentinel to question (1-" << numSentinels << "): ";
+            cin >> chosenSentinel;
+        }
+        chosenSentinel -= 1;
+        
+        cout << "You ask the sentinel: " << questions[chosenSentinel].question << "\n";
+        
+        if (questions[chosenSentinel].role == 0){
+            cout << "The sentinel responds: " << questions[chosenSentinel].answer << "\n";
+        }else{
+            cout << "The sentinel responds: " << questions[chosenSentinel].lie << "\n";
+        }
+        
+        cout << "Do you believe the sentinel? (Y/N):";
+        cin >> userAnswer;
+        
+        if (userAnswer == 'y' || userAnswer == 'n'){
+            userAnswer = toupper(userAnswer);
+        }
+        
+        if((userAnswer == 'Y' && questions[chosenSentinel].role == 0) || (userAnswer == 'N' && questions[chosenSentinel].role == 1)){
+            cout << "You detected the guessed correctly!" << "\n";
+            numCorrect++;
+        }else{
+            cout << "Wrong detection! Try Again." << "\n";
+        }
+        
+        // Display progress bar
+            cout << "Progress: [";
+            for (int i = 0; i < numCorrect; i++) {
+                cout << "=";
+            }
+            for (int i = 0; i < numSentinels - numCorrect; i++) {
+                cout << " ";
+            }
+            cout << "] " << numCorrect << "/" << numSentinels << "\n\n";
+    }
+    
+    cout << "You guessed all " << numSentinels << " questions from each sentinel. Congrats!" << "\n";
+    
+    return 0;
+}
